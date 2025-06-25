@@ -10,7 +10,15 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
+import sys
 from pathlib import Path
+from dotenv import load_dotenv
+
+TESTING = 'test' in sys.argv
+
+# Load environment variables from the .env file
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,6 +45,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.postgres',
+
+    # Third-party apps
+    'rest_framework',
+    'rest_framework_simplejwt',
+    "rest_framework_simplejwt.token_blacklist",
+    'drf_spectacular',
+    'taggit',
+    'django_filters',
+    
+    # First-party apps
 ]
 
 MIDDLEWARE = [
@@ -46,7 +65,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',   
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -58,6 +77,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -72,10 +92,26 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# DATABASES
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME'),  # Your database name
+        'USER': os.getenv('DB_USER'),  # Your database user
+        'PASSWORD': os.getenv('DB_PASSWORD'),  # Your database password
+        'HOST': os.getenv('DB_HOST'),  # Host where PostgreSQL is running
+        'PORT': os.getenv('DB_PORT'),  # Leave empty for default port (5432)
+    }
+}
+
+# CACHES
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": os.getenv('CACHE_LOCATION'),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
     }
 }
 
@@ -120,3 +156,32 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Media
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR / 'media')
+
+
+# OTP
+OTP = {
+    "EXPIRATION_TIME_SECONDS": 5,
+    "LONG_TIME_SECONDS": 2 * 60 * 60,
+    "LONG_MAX_REQUESTS": 2,
+
+    "VALID_WINDOW": 1,
+    # VALID_WINDOW defines how many time steps are valid for OTP
+    # verification Each step is 30 seconds, and values from 0 to 5 are allowed.
+}
+
+
+# Debug toolbar
+if not TESTING:
+    INSTALLED_APPS = [
+        *INSTALLED_APPS,
+        "debug_toolbar",
+    ]
+    MIDDLEWARE = [
+        "debug_toolbar.middleware.DebugToolbarMiddleware",
+        *MIDDLEWARE,
+    ]
