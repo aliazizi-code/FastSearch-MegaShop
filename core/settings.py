@@ -2,6 +2,7 @@ import os
 import sys
 from pathlib import Path
 from dotenv import load_dotenv
+from datetime import timedelta
 
 TESTING = 'test' in sys.argv
 
@@ -180,3 +181,33 @@ if not TESTING:
 
 # USER_MODEL
 AUTH_USER_MODEL = 'accounts.User'
+
+
+# Simple JWT
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
+    # Auth
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    # Auth Cookie
+    "AUTH_COOKIE_ACCESS": "access_token",
+    "AUTH_COOKIE_REFRESH": "refresh_token",
+    "AUTH_COOKIE_DOMAIN": None,  # ".example.com" or None for standard domain cookie
+    "AUTH_COOKIE_SECURE": False,  # Whether the auth cookies should be secure (https:// only).
+    "AUTH_COOKIE_HTTP_ONLY": True,
+    "AUTH_COOKIE_SAMESITE": "Lax",
+    # The flag restricting cookie leaks on cross-site requests. 'Lax', 'Strict' or None to disable the flag.
+    "AUTH_COOKIE_REFRESH_PATH": "/accounts/auth/",
+}
+
+
+# REST_FRAMEWORK
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "accounts.authentication.JWTCookieAuthentication",
+    ),
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
