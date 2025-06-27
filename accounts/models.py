@@ -8,18 +8,6 @@ from .managers import UserManager
 
 class User(AbstractBaseUser, PermissionsMixin):
     phone = PhoneNumberField(verbose_name=_("Phone Number"))
-    first_name = models.CharField(
-        max_length=255,
-        blank=True,
-        null=True,
-        verbose_name=_('First Name')
-    )
-    last_name = models.CharField(
-        max_length=255,
-        blank=True,
-        null=True,
-        verbose_name=_('Last Name')
-    )
     is_active = models.BooleanField(
         default=True,
         verbose_name=_('Is Active')
@@ -55,11 +43,5 @@ class User(AbstractBaseUser, PermissionsMixin):
             models.Index(fields=['phone']),
         ]
 
-    def full_name(self):
-        if self.first_name and self.last_name:
-            return f"{self.first_name.capitalize()} {self.last_name.capitalize()}"
-        return None
-
     def __str__(self):
-        full_name = self.full_name()
-        return f"{full_name} ({self.phone})" if full_name else self.phone
+        return f"{self.phone}"

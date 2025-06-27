@@ -32,7 +32,7 @@ class UserChangeForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('phone', 'first_name', 'last_name', 'password', 'is_active', 'is_staff')
+        fields = ('phone', 'password', 'is_active', 'is_staff')
 
 
 class UserRegistrationForm(forms.Form):
