@@ -156,7 +156,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR / 'media')
 
 # OTP
 OTP = {
-    "EXPIRATION_TIME_SECONDS": 5,
+    "EXPIRATION_TIME_SECONDS": 60 * 2,
     "LONG_TIME_SECONDS": 2 * 60 * 60,
     "LONG_MAX_REQUESTS": 2,
 
