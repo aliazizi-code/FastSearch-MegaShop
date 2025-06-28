@@ -1,19 +1,18 @@
 # Django Imports
 from django.conf import settings
-from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
-from django.utils.decorators import method_decorator
 from django.utils import timezone
-from django.middleware.csrf import rotate_token
+from django.middleware.csrf import rotate_token, get_token
 
 # Third Party Imports
-from rest_framework import viewsets, status, generics
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.exceptions import PermissionDenied
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+from rest_framework_simplejwt.serializers import TokenBlacklistSerializer
 from rest_framework_simplejwt.tokens import RefreshToken, Token
 from rest_framework_simplejwt.views import TokenRefreshView
 
@@ -54,6 +53,14 @@ class RefreshTokenAPIView(TokenRefreshView):
 
         return refresh
     
+
+class CSRFAPIView(APIView):
+    permission_classes = ()
+    authentication_classes = ()
+
+    def get(self, request):
+        return Response({"token": get_token(request)})
+
 
 # region Auth
 
@@ -140,31 +147,31 @@ class VerifyOTPView(BaseLoginView):
         return response
 
 
-# class LogoutAPIView(APIView):
-#     serializer_class = TokenBlacklistSerializer
-#     permission_classes = (IsAuthenticated,)
+class LogoutAPIView(APIView):
+    serializer_class = TokenBlacklistSerializer
+    permission_classes = [IsAuthenticated]
 
-#     def post(self, request):
-#         serializer = self.serializer_class(data={"refresh": self.get_refresh_token_from_cookie(request)})
+    def post(self, request):
+        serializer = self.serializer_class(data={"refresh": self.get_refresh_token_from_cookie(request)})
 
-#         try:
-#             serializer.is_valid(raise_exception=True)
-#         except TokenError as e:
-#             raise InvalidToken(e.args[0]) from e
+        try:
+            serializer.is_valid(raise_exception=True)
+        except TokenError as e:
+            raise InvalidToken(e.args[0]) from e
 
-#         response = Response({}, status=status.HTTP_200_OK)
+        response = Response({}, status=status.HTTP_200_OK)
 
-#         # Delete jwt cookies
-#         delete_token_cookies(response)
+        # Delete jwt cookies
+        delete_token_cookies(response)
 
-#         return response
+        return response
 
-#     def get_refresh_token_from_cookie(self, request) -> Token:
-#         refresh = self.request.COOKIES.get(settings.SIMPLE_JWT["AUTH_COOKIE_REFRESH"])
-#         if not refresh:
-#             raise PermissionDenied
+    def get_refresh_token_from_cookie(self, request) -> Token:
+        refresh = self.request.COOKIES.get(settings.SIMPLE_JWT["AUTH_COOKIE_REFRESH"])
+        if not refresh:
+            raise PermissionDenied
 
-#         return refresh
+        return refresh
 
 # endregion
 
@@ -206,6 +213,10 @@ class ChangePhoneVerifyView(APIView):
             
             user.phone = data["phone"]
             user.save()
-            return Response({"detail": _("شماره با موفقیت تغییر یافت.")}, status=status.HTTP_200_OK)
+            return Response(
+                {"detail": _("Your phone number has been changed successfully.")},
+                status=status.HTTP_200_OK)
              
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# endregion
