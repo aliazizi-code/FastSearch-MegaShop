@@ -158,7 +158,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR / 'media')
 OTP = {
     "EXPIRATION_TIME_SECONDS": 60 * 2,
     "LONG_TIME_SECONDS": 2 * 60 * 60,
-    "LONG_MAX_REQUESTS": 2,
+    "LONG_MAX_REQUESTS": 15,
 
     "VALID_WINDOW": 1,
     # VALID_WINDOW defines how many time steps are valid for OTP
@@ -194,9 +194,10 @@ SIMPLE_JWT = {
     "AUTH_COOKIE_DOMAIN": None,  # ".example.com" or None for standard domain cookie
     "AUTH_COOKIE_SECURE": False,  # Whether the auth cookies should be secure (https:// only).
     "AUTH_COOKIE_HTTP_ONLY": True,
+    "AUTH_COOKIE_USE_CSRF": True,
     "AUTH_COOKIE_SAMESITE": "Lax",
     # The flag restricting cookie leaks on cross-site requests. 'Lax', 'Strict' or None to disable the flag.
-    "AUTH_COOKIE_REFRESH_PATH": "/accounts/auth/",
+    "AUTH_COOKIE_REFRESH_PATH": "/api/accounts/auth/",
 }
 
 
@@ -218,5 +219,14 @@ CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 
+
 # RATELIMIT
 RATELIMIT_USE_CACHE = 'default'
+
+
+# CSRF
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost", # just for local
+]
+CSRF_COOKIE_DOMAIN = None  # ".example.com" or None for standard domain cookie
+CSRF_COOKIE_SECURE = False  # Whether the auth cookies should be secure (https:// only).
