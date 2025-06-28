@@ -191,8 +191,8 @@ SIMPLE_JWT = {
     # Auth Cookie
     "AUTH_COOKIE_ACCESS": "access_token",
     "AUTH_COOKIE_REFRESH": "refresh_token",
-    "AUTH_COOKIE_DOMAIN": None,  # ".example.com" or None for standard domain cookie
-    "AUTH_COOKIE_SECURE": False,  # Whether the auth cookies should be secure (https:// only).
+    "AUTH_COOKIE_DOMAIN": None,  # TODO: ".example.com" or None for standard domain cookie
+    "AUTH_COOKIE_SECURE": False,  # TODO: Whether the auth cookies should be secure (https:// only).
     "AUTH_COOKIE_HTTP_ONLY": True,
     "AUTH_COOKIE_USE_CSRF": True,
     "AUTH_COOKIE_SAMESITE": "Lax",
@@ -228,5 +228,6 @@ RATELIMIT_USE_CACHE = 'default'
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost", # just for local
 ]
-CSRF_COOKIE_DOMAIN = None  # ".example.com" or None for standard domain cookie
-CSRF_COOKIE_SECURE = False  # Whether the auth cookies should be secure (https:// only).
+# CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_DOMAIN = None  # TODO: ".example.com" or None for standard domain cookie
+CSRF_COOKIE_SECURE = False  # TODO: Whether the auth cookies should be secure (https:// only).
