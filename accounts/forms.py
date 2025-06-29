@@ -36,7 +36,7 @@ class UserChangeForm(forms.ModelForm):
 
 
 class UserRegistrationForm(forms.Form):
-    phone = forms.CharField(max_length=11)
+    phone = forms.CharField(max_length=13)
 
     def clean_phone(self):
         phone = self.cleaned_data['phone']
