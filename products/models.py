@@ -23,7 +23,11 @@ class Product(models.Model):
         db_index=False
     )
 
-    description = models.TextField(verbose_name=_('Description'))
+    description = models.TextField(
+        verbose_name=_('Description'),
+        blank=True,
+        null=True
+    )
     tags = TaggableManager(verbose_name=_('Tags'), help_text=_('Tags for the product'))
 
     cached_tags = models.TextField(
@@ -80,7 +84,6 @@ class Product(models.Model):
         Product.objects.filter(pk=self.pk).update(
             sv=(
                 SearchVector('title', weight='A') +
-                SearchVector('description', weight='B') +
-                SearchVector('cached_tags', weight='C')
+                SearchVector('cached_tags', weight='B')
             )
         )
