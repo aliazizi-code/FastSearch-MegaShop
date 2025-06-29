@@ -49,6 +49,13 @@ class ChangePhoneRequestSerializer(RequestOTPSerializer):
           
         
 class ChangePhoneVerifySerializer(VerifyOTPSerializer):
+    def validate_phone(self, value):
+        if User.objects.filter(phone=value).exists():
+            raise serializers.ValidationError(
+                _("This phone number is already in use. Please use a different number.")
+            )
+        return value
+    
     def validate_otp(self, value):
         phone = self.initial_data.get('phone')
         
