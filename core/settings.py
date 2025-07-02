@@ -233,3 +233,11 @@ CSRF_TRUSTED_ORIGINS = [
 # CSRF_COOKIE_HTTPONLY = False
 CSRF_COOKIE_DOMAIN = None  # TODO: ".example.com" or None for standard domain cookie
 CSRF_COOKIE_SECURE = False  # TODO: Whether the auth cookies should be secure (https:// only).
+
+
+# Elasticsearch configuration
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': 'localhost:9200'
+    },
+}
