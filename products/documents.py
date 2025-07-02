@@ -25,9 +25,19 @@ product_index.settings(
 
 @registry.register_document
 class ProductDocument(Document):
+    title = fields.TextField(
+        analyzer="rebuilt_persian",
+        fields={
+            'keyword': fields.KeywordField()
+        }
+    )
+    description = fields.TextField(
+        analyzer="rebuilt_persian",
+        fields={
+            'keyword': fields.KeywordField()
+        }
+    )
     cached_tags = fields.TextField(analyzer="rebuilt_persian")
-    title = fields.TextField(analyzer="rebuilt_persian")
-    description = fields.TextField(analyzer="rebuilt_persian")
     
     class Index:
         name = 'products'
