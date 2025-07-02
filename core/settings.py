@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'taggit',
     'django_filters',
+    'django_elasticsearch_dsl',
+    'django_elasticsearch_dsl_drf',
     
     # First-party apps
     'accounts.apps.AccountsConfig',
