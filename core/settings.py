@@ -238,6 +238,6 @@ CSRF_COOKIE_SECURE = False  # TODO: Whether the auth cookies should be secure (h
 # Elasticsearch configuration
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': 'localhost:9200'
+        'hosts': 'http://localhost:9200'
     },
 }
