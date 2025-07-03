@@ -1,24 +1,28 @@
-from rest_framework import status, response
 from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
-from django_elasticsearch_dsl_drf.filter_backends import (
-    FilteringFilterBackend,
-    CompoundSearchFilterBackend,
-    DefaultOrderingFilterBackend,
-)
-from django_elasticsearch_dsl_drf.pagination import PageNumberPagination
+from django_elasticsearch_dsl_drf.filter_backends import CompoundSearchFilterBackend
+from rest_framework.pagination import CursorPagination
+from rest_framework.exceptions import ValidationError
 
 from .documents import ProductDocument
 from .serializers import ProductDocumentSerializer
 
 
+class ProductListPagination(CursorPagination):
+    page_size = 16
+    page_size_query_param = 'page_size'
+    max_page_size = 48
+    
+    def get_ordering(self, request, queryset, view):
+        if queryset.query.order_by:
+            return queryset.query.order_by
+        return super().get_ordering(request, queryset, view)
+
+
 class ProductDocumentView(DocumentViewSet):
     document = ProductDocument
     serializer_class = ProductDocumentSerializer
-    pagination_class = PageNumberPagination
-    filter_backends = [
-        FilteringFilterBackend,
-        CompoundSearchFilterBackend,
-    ]
+    pagination_class = ProductListPagination
+    filter_backends = [CompoundSearchFilterBackend]
 
     search_fields = (
         'title.fa',
@@ -28,22 +32,9 @@ class ProductDocumentView(DocumentViewSet):
         'tags.fa',
         'tags.en',
     )
-
-    filter_fields = {
-        'is_published': 'is_published',
-        'is_deleted': 'is_deleted',
-    }
-
-    ordering_fields = {
-        'title': 'title.keyword',
-    }
-
-    ordering = ('title',)
     
-    def list(self, request, *args, **kwargs):
-        if not request.GET.get('search'):
-            return response.Response(
-                {"detail": 'Please provide a search query.'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        return super().list(request, *args, **kwargs)
+    def get_queryset(self):
+        query = self.request.query_params.get('search')
+        if not query:
+            raise ValidationError("Search query parameter 'search' is required.")
+        return super().get_queryset()
