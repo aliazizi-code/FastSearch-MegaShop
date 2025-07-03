@@ -44,20 +44,20 @@ class ProductDocument(Document):
     title = fields.TextField(
         fields={
             "fa": fields.TextField(analyzer='rebuilt_persian'),
-            "en": fields.TextField(analyzer='rebuilt_english'),
+            "en": fields.TextField(),
         }
     )
     description = fields.TextField(
         fields={
             "fa": fields.TextField(analyzer='rebuilt_persian'),
-            "en": fields.TextField(analyzer='rebuilt_english'),
+            "en": fields.TextField(),
         }
     )
     tags = fields.TextField(
         attr='cached_tags',
         fields={
             "fa": fields.TextField(analyzer='rebuilt_persian'),
-            "en": fields.TextField(analyzer='rebuilt_english'),
+            "en": fields.TextField(),
         }
     )
     
