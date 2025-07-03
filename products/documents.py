@@ -42,18 +42,24 @@ product_index.settings(
 @registry.register_document
 class ProductDocument(Document):
     title = fields.TextField(
-        analyzer="rebuilt_persian",
         fields={
-            'keyword': fields.KeywordField()
+            "fa": fields.TextField(analyzer='rebuilt_persian'),
+            "en": fields.TextField(analyzer='rebuilt_english'),
         }
     )
     description = fields.TextField(
-        analyzer="rebuilt_persian",
         fields={
-            'keyword': fields.KeywordField()
+            "fa": fields.TextField(analyzer='rebuilt_persian'),
+            "en": fields.TextField(analyzer='rebuilt_english'),
         }
     )
-    cached_tags = fields.TextField(analyzer="rebuilt_persian")
+    tags = fields.TextField(
+        attr='cached_tags',
+        fields={
+            "fa": fields.TextField(analyzer='rebuilt_persian'),
+            "en": fields.TextField(analyzer='rebuilt_english'),
+        }
+    )
     
     class Index:
         name = 'products'
@@ -61,7 +67,7 @@ class ProductDocument(Document):
         
     class Django:
         model = Product
-        fields = ['is_published', 'is_deleted']
+        fields = ['is_published', 'is_deleted', 'slug']
         
     def get_queryset(self):
         return super().get_queryset().filter(is_published=True, is_deleted=False)
