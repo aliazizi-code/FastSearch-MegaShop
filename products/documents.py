@@ -9,13 +9,29 @@ product_index.settings(
     number_of_shards=1,
     number_of_replicas=0,
     analysis={
+        "char_filter": {
+            "zero_width_spaces": {
+                "type": "mapping",
+                "mappings": [ "\\u200C=>\\u0020"]
+            }
+        },
+        "filter": {
+            "persian_stop": {
+            "type": "stop",
+            "stopwords":  "_persian_"
+            }
+        },
         "analyzer": {
             "rebuilt_persian": {
-                'tokenizer': "standard",
+                "tokenizer":     "standard",
+                "char_filter": [ "zero_width_spaces" ],
                 "filter": [
                     "lowercase",
-                    'arabic_normalization',
-                    'persian_normalization',
+                    "decimal_digit",
+                    "arabic_normalization",
+                    "persian_normalization",
+                    "persian_stop",
+                    "persian_stem"
                 ]
             }
         }
