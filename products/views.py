@@ -18,13 +18,15 @@ class ProductDocumentView(DocumentViewSet):
     filter_backends = [
         FilteringFilterBackend,
         CompoundSearchFilterBackend,
-        DefaultOrderingFilterBackend,
     ]
 
     search_fields = (
-        'title',
-        'description',
-        'cached_tags',
+        'title.fa',
+        'title.en',
+        'description.fa',
+        'description.en',
+        'tags.fa',
+        'tags.en',
     )
 
     filter_fields = {
