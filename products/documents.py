@@ -67,7 +67,7 @@ class ProductDocument(Document):
         
     class Django:
         model = Product
-        fields = ['is_published', 'is_deleted', 'slug']
+        fields = ['is_published', 'is_deleted']
         
     def get_queryset(self):
         return super().get_queryset().filter(is_published=True, is_deleted=False)
