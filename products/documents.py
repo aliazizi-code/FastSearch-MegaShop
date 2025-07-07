@@ -8,6 +8,7 @@ product_index = Index('products')
 product_index.settings(
     number_of_shards=1,
     number_of_replicas=0,
+    refresh_interval='30s',
     analysis={
         "char_filter": {
             "zero_width_spaces": {
