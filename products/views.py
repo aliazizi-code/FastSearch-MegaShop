@@ -1,5 +1,5 @@
 from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
-from django_elasticsearch_dsl_drf.filter_backends import CompoundSearchFilterBackend
+from django_elasticsearch_dsl_drf.filter_backends import CompoundSearchFilterBackend, SimpleQueryStringSearchFilterBackend
 from rest_framework.pagination import CursorPagination
 from rest_framework.exceptions import ValidationError
 
@@ -21,16 +21,19 @@ class ProductListPagination(CursorPagination):
 class ProductDocumentView(DocumentViewSet):
     document = ProductDocument
     serializer_class = ProductDocumentSerializer
-    pagination_class = ProductListPagination
+    # pagination_class = ProductListPagination
     filter_backends = [CompoundSearchFilterBackend]
 
     search_fields = (
-        'title.fa',
-        'title.en',
-        'description.fa',
-        'description.en',
-        'tags.fa',
-        'tags.en',
+        'title_fa',
+        'title_fa_ngram',
+        'title_en',
+        'description_fa',
+        'description_fa_ngram',
+        'description_en',
+        'tags_fa',
+        'tags_fa_ngram',
+        'tags_en',
     )
     
     def get_queryset(self):
