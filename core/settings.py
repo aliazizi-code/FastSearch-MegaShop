@@ -238,9 +238,13 @@ CSRF_COOKIE_SECURE = False  # TODO: Whether the auth cookies should be secure (h
 # Elasticsearch configuration
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': 'http://localhost:9200',
-        'timeout': 200,  # seconds
-        'max_retries': 5,
-        'retry_on_timeout': True,
+        'hosts': 'http://localhost:9200'
     },
 }
+
+if DEBUG:
+    ELASTICSEARCH_DSL['default'].update({
+        'timeout': 100,  # seconds
+        'max_retries': 5,
+        'retry_on_timeout': True,
+    })
