@@ -1,7 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from taggit.managers import TaggableManager
-from utils import AutoSlugField
 
 
 class ProductManager(models.Manager):
@@ -14,12 +13,6 @@ class ProductManager(models.Manager):
 
 class Product(models.Model):
     title = models.CharField(max_length=200, verbose_name=_('Title'))
-
-    slug = AutoSlugField(
-        source_field='title',
-        verbose_name=_('Slug'),
-        db_index=False
-    )
 
     description = models.TextField(
         verbose_name=_('Description'),
@@ -45,6 +38,3 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
-
-    def update_cached_tags(self):
-        self.cached_tags = ','.join(self.tags.names())
