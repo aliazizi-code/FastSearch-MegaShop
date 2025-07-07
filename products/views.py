@@ -1,10 +1,11 @@
 from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
-from django_elasticsearch_dsl_drf.filter_backends import CompoundSearchFilterBackend, SimpleQueryStringSearchFilterBackend
+from django_elasticsearch_dsl_drf.filter_backends import CompoundSearchFilterBackend
 from rest_framework.pagination import CursorPagination
 from rest_framework.exceptions import ValidationError
 
 from .documents import ProductDocument
 from .serializers import ProductDocumentSerializer
+from .filters import FuzzySearchFilterBackend
 
 
 class ProductListPagination(CursorPagination):
@@ -22,7 +23,9 @@ class ProductDocumentView(DocumentViewSet):
     document = ProductDocument
     serializer_class = ProductDocumentSerializer
     # pagination_class = ProductListPagination
-    filter_backends = [CompoundSearchFilterBackend]
+    filter_backends = [
+        FuzzySearchFilterBackend
+    ]
 
     search_fields = (
         'title_fa',
@@ -40,4 +43,6 @@ class ProductDocumentView(DocumentViewSet):
         query = self.request.query_params.get('search')
         if not query:
             raise ValidationError("Search query parameter 'search' is required.")
-        return super().get_queryset()
+        
+        queryset = super().get_queryset()
+        return queryset.source(['id', 'title'])
