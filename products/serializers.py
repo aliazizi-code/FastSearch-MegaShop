@@ -8,12 +8,5 @@ class ProductDocumentSerializer(DocumentSerializer):
         document = ProductDocument
         fields = (
             'title',
-            'slug',
+            'id',
         )
-    
-    def get_slug(self, obj):
-        try:
-            product = Product.objects.only('slug').get(pk=obj.meta.id)
-            return product.slug
-        except Product.DoesNotExist:
-            return None
