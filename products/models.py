@@ -19,7 +19,11 @@ class Product(models.Model):
         blank=True,
         null=True
     )
-    tags = TaggableManager(verbose_name=_('Tags'), help_text=_('Tags for the product'))
+    tags = TaggableManager(
+        verbose_name=_('Tags'),
+        help_text=_('Tags for the product'),
+        blank=True
+    )
 
     cached_tags = models.TextField(
         blank=True,
