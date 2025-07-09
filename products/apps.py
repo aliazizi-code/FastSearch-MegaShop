@@ -12,6 +12,7 @@ class ProductsConfig(AppConfig):
         # Warm up the ES cache by running a lightweight match_all query
         try:
             idx = Index('products')
-            idx.search().query("match_all")[0:1].execute()
+            for _ in range(10):
+                idx.search().query("match_all")[0:10].execute()
         except Exception:
             pass
