@@ -244,7 +244,7 @@ ELASTICSEARCH_DSL = {
 
 if DEBUG:
     ELASTICSEARCH_DSL['default'].update({
-        'timeout': 100,  # seconds
-        'max_retries': 5,
+        'timeout': 10,  # seconds
+        'max_retries': 3,
         'retry_on_timeout': True,
     })
