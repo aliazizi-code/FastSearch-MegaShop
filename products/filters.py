@@ -11,11 +11,8 @@ class FuzzySearchFilterBackend(BaseSearchFilterBackend):
             MultiMatch(
                 query=query,
                 fields=[
-                    'title_fa^3',
                     'title_fa_ngram^2',
                     'title_en',
-                    'description_fa',
-                    'tags_fa',
                     'tags_fa_ngram',
                 ],
                 fuzziness='AUTO',
