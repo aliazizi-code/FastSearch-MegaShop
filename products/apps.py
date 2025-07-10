@@ -1,18 +1,32 @@
 from django.apps import AppConfig
-from django_elasticsearch_dsl import Index
+import logging
+import random
+import time
+
+logger = logging.getLogger(__name__)
 
 
 class ProductsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'products'
-    
+
     def ready(self):
         import products.signals
-        
-        # Warm up the ES cache by running a lightweight match_all query
+
         try:
-            idx = Index('products')
-            for _ in range(10):
-                idx.search().query("match_all")[0:10].execute()
-        except Exception:
-            pass
+            from products.documents import ProductDocument
+
+            for i in range(5):
+                logger.debug(f"🔥 Warm-up pass {i+1}/3 ...")
+
+                offset = random.randint(0, 100)
+                ProductDocument.search() \
+                    .query("match_all") \
+                    .source(['id', 'title', 'price', 'description']) \
+                    [offset:offset + 20] \
+                    .execute()
+
+                time.sleep(0.2)
+
+        except Exception as e:
+            logger.warning("❌ Elasticsearch warm-up failed:", exc_info=e)
