@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     'drf_spectacular',
     'taggit',
-    'django_filters',
     'django_elasticsearch_dsl',
     'django_elasticsearch_dsl_drf',
     
@@ -89,11 +88,11 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),  # Your database name
-        'USER': os.getenv('DB_USER'),  # Your database user
-        'PASSWORD': os.getenv('DB_PASSWORD'),  # Your database password
-        'HOST': os.getenv('DB_HOST'),  # Host where PostgreSQL is running
-        'PORT': os.getenv('DB_PORT'),  # Leave empty for default port (5432)
+        'NAME': 'db',
+        'USER': 'user',
+        'PASSWORD': 'password',
+        'HOST': 'db',
+        'PORT': '5432'
     }
 }
 
@@ -101,7 +100,7 @@ DATABASES = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": os.getenv('CACHE_LOCATION'),
+        "LOCATION": 'redis://redis:6379/0',
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
@@ -143,7 +142,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR / 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -167,17 +167,6 @@ OTP = {
     # verification Each step is 30 seconds, and values from 0 to 5 are allowed.
 }
 
-
-# Debug toolbar
-if not TESTING:
-    INSTALLED_APPS = [
-        *INSTALLED_APPS,
-        "debug_toolbar",
-    ]
-    MIDDLEWARE = [
-        "debug_toolbar.middleware.DebugToolbarMiddleware",
-        *MIDDLEWARE,
-    ]
     
 
 # USER_MODEL
@@ -208,9 +197,6 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "accounts.authentication.JWTCookieAuthentication",
     ),
-    'DEFAULT_FILTER_BACKENDS': (
-        'django_filters.rest_framework.DjangoFilterBackend',
-    ),
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
@@ -223,12 +209,13 @@ CELERY_TASK_SERIALIZER = 'json'
 
 
 # RATELIMIT
-RATELIMIT_USE_CACHE = 'default'
+# RATELIMIT_USE_CACHE = 'default'
 
 
 # CSRF
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost", # just for local
+    "http://localhost:8010",
+    "http://127.0.0.1:8010",
 ]
 # CSRF_COOKIE_HTTPONLY = False
 CSRF_COOKIE_DOMAIN = None  # TODO: ".example.com" or None for standard domain cookie
@@ -238,7 +225,7 @@ CSRF_COOKIE_SECURE = False  # TODO: Whether the auth cookies should be secure (h
 # Elasticsearch configuration
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': 'http://localhost:9200'
+        'hosts': 'http://elasticsearch:9200'
     },
 }
 
