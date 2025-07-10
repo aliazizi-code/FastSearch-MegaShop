@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:14-alpine
+    environment:
+      POSTGRES_DB: db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "54321:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  pg_restore:
+    image: postgres:14-alpine
+    depends_on:
+      - db
+    volumes:
+      - ./backups/pg/postgres_backup.sql:/backups/postgres_backup.sql:ro
+      - ./backups/pg/restore.sh:/restore.sh
+    entrypoint: [ "sh", "/restore.sh" ]
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+
+  elasticsearch:
+    image: elasticsearch:8.18.1
+    healthcheck:
+      test: curl -f http://localhost:9200/_cluster/health
+      interval: 10s
+      timeout: 5s
+      retries: 30
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - path.repo=/snapshots
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+    ports:
+      - "9201:9200"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+      - ./backups/es/snapshot:/snapshots
+
+  es_restore:
+    image: curlimages/curl:latest
+    depends_on:
+        elasticsearch:
+          condition: service_healthy
+    volumes:
+      - ./backups/es/restore.sh:/restore.sh
+    entrypoint: [ "sh", "/restore.sh" ]
+
+  django:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8010:8000"
+    volumes:
+      - .:/app
+      - ./staticfiles:/app/staticfiles
+    depends_on:
+      - db
+      - redis
+      - elasticsearch
+    environment:
+      - DATABASE_URL=postgres://user:password@db:5432/db
+      - REDIS_URL=redis://redis:6379/0
+      - ELASTIC_URL=http://elasticsearch:9200
+
+volumes:
+  postgres_data:
+  redis_data:
+  es_data:
