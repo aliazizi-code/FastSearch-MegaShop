@@ -1,9 +1,6 @@
 from django.apps import AppConfig
-import logging
 import random
 import time
-
-logger = logging.getLogger(__name__)
 
 
 class ProductsConfig(AppConfig):
@@ -17,8 +14,6 @@ class ProductsConfig(AppConfig):
             from products.documents import ProductDocument
 
             for i in range(5):
-                logger.debug(f"🔥 Warm-up pass {i+1}/3 ...")
-
                 offset = random.randint(0, 100)
                 ProductDocument.search() \
                     .query("match_all") \
@@ -29,4 +24,4 @@ class ProductsConfig(AppConfig):
                 time.sleep(0.2)
 
         except Exception as e:
-            logger.warning("❌ Elasticsearch warm-up failed:", exc_info=e)
+            pass
