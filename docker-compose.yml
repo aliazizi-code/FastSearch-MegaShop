@@ -11,15 +11,8 @@ services:
       - "54321:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
-  pg_restore:
-    image: postgres:14-alpine
-    depends_on:
-      - db
-    volumes:
-      - ./backups/pg/postgres_backup.sql:/backups/postgres_backup.sql:ro
-      - ./backups/pg/restore.sh:/restore.sh
-    entrypoint: [ "sh", "/restore.sh" ]
+    logging:
+      driver: "none"
 
   redis:
     image: redis:7-alpine
@@ -27,11 +20,13 @@ services:
       - "6380:6379"
     volumes:
       - redis_data:/data
+    logging:
+      driver: "none"
 
   elasticsearch:
     image: elasticsearch:8.18.1
     healthcheck:
-      test: curl -f http://localhost:9200/_cluster/health
+      test: ["CMD-SHELL", "curl -fs http://localhost:9200/_cluster/health || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 30
@@ -49,15 +44,27 @@ services:
     volumes:
       - es_data:/usr/share/elasticsearch/data
       - ./backups/es/snapshot:/snapshots
-
-  es_restore:
-    image: curlimages/curl:latest
+    logging:
+      driver: "none"
+    
+  kibana:
+    image: kibana:8.18.1
     depends_on:
-        elasticsearch:
-          condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    environment:
+      ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
+    ports:
+      - "56012:5601"
     volumes:
-      - ./backups/es/restore.sh:/restore.sh
-    entrypoint: [ "sh", "/restore.sh" ]
+      - ./backups/es/snapshot:/snapshots
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5601/status"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+    logging:
+      driver: "none"
 
   django:
     build:
@@ -70,9 +77,12 @@ services:
       - .:/app
       - ./staticfiles:/app/staticfiles
     depends_on:
-      - db
-      - redis
-      - elasticsearch
+      elasticsearch:
+        condition: service_healthy
+      db:
+        condition: service_started
+      redis:
+        condition: service_started
     environment:
       - DATABASE_URL=postgres://user:password@db:5432/db
       - REDIS_URL=redis://redis:6379/0
