@@ -1,0 +1,245 @@
+{
+	"info": {
+		"_postman_id": "1c565fe2-70df-405b-839f-816e71b4bcc5",
+		"name": "FastSearch-MegaShop",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "39761312"
+	},
+	"item": [
+		{
+			"name": "accountes",
+			"item": [
+				{
+					"name": "auth-otp-request",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "HhVJhA4bntzJJkxpTP2ZXrr3543wlZRU",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "phone",
+									"value": "{{phonNumber}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": "{{baseUrl}}accounts/auth/otp/request/"
+					},
+					"response": []
+				},
+				{
+					"name": "auth-otp-verify",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "phone",
+									"value": "{{phonNumber}}",
+									"type": "text"
+								},
+								{
+									"key": "otp",
+									"value": "705243",
+									"type": "text"
+								}
+							]
+						},
+						"url": "{{baseUrl}}accounts/auth/otp/verify/"
+					},
+					"response": []
+				},
+				{
+					"name": "logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "phone",
+									"value": "{{phonNumber}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": "{{baseUrl}}accounts/auth/logout/"
+					},
+					"response": []
+				},
+				{
+					"name": "token-refresh",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "phone",
+									"value": "{{phonNumber}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": "{{baseUrl}}accounts/auth/token/refresh/"
+					},
+					"response": []
+				},
+				{
+					"name": "phone-change-request",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "phone",
+									"value": "{{newPhonNumber}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": "{{baseUrl}}accounts/user/phone/change/request/"
+					},
+					"response": []
+				},
+				{
+					"name": "phone-change-verify",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "phone",
+									"value": "{{newPhonNumber}}",
+									"type": "text"
+								},
+								{
+									"key": "otp",
+									"value": "814781",
+									"type": "text"
+								}
+							]
+						},
+						"url": "{{baseUrl}}accounts/user/phone/change/verify/"
+					},
+					"response": []
+				},
+				{
+					"name": "csrf_token",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "phone",
+									"value": "{{phonNumber}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": "{{baseUrl}}accounts/csrf_token/"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "products",
+			"item": [
+				{
+					"name": "Search",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}products/?search=ماسین",
+							"host": [
+								"{{baseUrl}}products"
+							],
+							"path": [
+								""
+							],
+							"query": [
+								{
+									"key": "page_size",
+									"value": "5",
+									"disabled": true
+								},
+								{
+									"key": "search_after",
+									"value": "38.655033,613",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": "ماسین"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8010/api/",
+			"type": "string"
+		},
+		{
+			"key": "phonNumber",
+			"value": "+989123456789",
+			"type": "string"
+		},
+		{
+			"key": "newPhonNumber",
+			"value": "+989012345678",
+			"type": "string"
+		}
+	]
+}
