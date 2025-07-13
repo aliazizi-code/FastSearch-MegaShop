@@ -1,5 +1,5 @@
 
-# 🌟 پروژه پیشرفته: سیستم جستجو و احراز هویت فارسی با امنیت و کارایی بالا
+# 🌟 پروژه پیشرفته: سیستم جستجو پیشرفته فارسی و احراز هویت با امنیت و کارایی بالا
 
 [![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white)](https://www.djangoproject.com/)
 [![DRF](https://img.shields.io/badge/DRF-red?style=for-the-badge&logo=python&logoColor=white)](https://www.django-rest-framework.org/)
